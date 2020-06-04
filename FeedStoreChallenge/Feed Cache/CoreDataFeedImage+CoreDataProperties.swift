@@ -24,3 +24,13 @@ extension CoreDataFeedImage {
     @NSManaged internal var cache: Cache
 
 }
+
+extension CoreDataFeedImage {
+    convenience init(context moc: NSManagedObjectContext, image: LocalFeedImage) {
+        self.init(context: moc)
+        self.id = image.id
+        self.location = image.location
+        self.feedDescription = image.description
+        self.url = image.url
+    }
+}

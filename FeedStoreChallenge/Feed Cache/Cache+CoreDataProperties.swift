@@ -56,3 +56,11 @@ extension Cache {
     @NSManaged internal func removeFromFeed(_ values: NSOrderedSet)
 
 }
+
+extension Cache {
+    convenience init(context moc: NSManagedObjectContext, feed: [CoreDataFeedImage], timestamp: Date) {
+        self.init(context: moc)
+        self.timestamp = timestamp
+        self.feed = NSOrderedSet(array: feed)
+    }
+}

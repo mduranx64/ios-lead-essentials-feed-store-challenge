@@ -62,19 +62,10 @@ public class CoreDataFeedStore: FeedStore {
     }
     
     public func insert(_ feed: [LocalFeedImage], timestamp: Date, completion: @escaping InsertionCompletion) {
-        let cache = Cache(context: context)
-        cache.timestamp = timestamp
-        
-        let coreDataFeedImages = feed.map { feed -> CoreDataFeedImage in
-            let coreDataFeedImage = CoreDataFeedImage(context: context)
-            coreDataFeedImage.id = feed.id
-            coreDataFeedImage.feedDescription = feed.description
-            coreDataFeedImage.location = feed.location
-            coreDataFeedImage.url = feed.url
-            return coreDataFeedImage
+        let coreDataFeedImages = feed.map { image -> CoreDataFeedImage in
+            return CoreDataFeedImage(context: context, image: image)
         }
-        
-        cache.addToFeed(NSOrderedSet(array: coreDataFeedImages))
+        _ = Cache(context: context, feed: coreDataFeedImages, timestamp: timestamp)
         
         do {
             try context.save()
