@@ -63,4 +63,9 @@ extension Cache {
         self.timestamp = timestamp
         self.feed = NSOrderedSet(array: feed)
     }
+    
+    var localFeed: [LocalFeedImage] {
+        let images = self.feed.array as? [CoreDataFeedImage] ?? []
+        return images.map { $0.local }
+    }
 }

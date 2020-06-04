@@ -33,4 +33,13 @@ extension CoreDataFeedImage {
         self.feedDescription = image.description
         self.url = image.url
     }
+    
+    var local: LocalFeedImage {
+        return LocalFeedImage(
+            id: id,
+            description: feedDescription,
+            location: location,
+            url: url
+        )
+    }
 }

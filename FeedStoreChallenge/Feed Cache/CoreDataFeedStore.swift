@@ -77,23 +77,11 @@ public class CoreDataFeedStore: FeedStore {
     
     public func retrieve(completion: @escaping RetrievalCompletion) {
         let request = Cache.createFetchRequest()
-
         do {
             guard let cache = try context.fetch(request).first else {
                 return completion(.empty)
             }
-            guard let coreDataFeedImages = cache.feed.array as? [CoreDataFeedImage] else {
-                return completion(.empty)
-            }
-            let localFeedImages = coreDataFeedImages.map { feed in
-                return LocalFeedImage(
-                    id: feed.id,
-                    description: feed.feedDescription,
-                    location: feed.location,
-                    url: feed.url
-                )
-            }
-            completion(.found(feed: localFeedImages, timestamp: cache.timestamp))
+            completion(.found(feed: cache.localFeed, timestamp: cache.timestamp))
         } catch {
             completion(.failure(error))
         }
