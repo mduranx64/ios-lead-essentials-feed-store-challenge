@@ -36,8 +36,10 @@ Finally, add to this README file:
 
 ### Comments and remarks you think other developers will find useful.
 
-...
+In this implementacion you can inject the directory locacion of the `CoreData` sql database so you can change it for testing porposes.
+In `CoreDataFeedStore` initializer `public init(storeURL: URL)`.
+To reset the database you just delete the directory where is located.
 
 ### The Dependency Diagram demonstrating the architecture of your solution. 
 
-...
+![FeedStore CoreData Diagram](feedstore_coredata_diagram.png)
