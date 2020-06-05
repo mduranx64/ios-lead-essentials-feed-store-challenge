@@ -49,9 +49,9 @@ public class CoreDataFeedStore: FeedStore {
 
         let persistentStoreCoordinator = persistentContainer.persistentStoreCoordinator
 
-         do {
-             try persistentStoreCoordinator.destroyPersistentStore(at:url, ofType: NSSQLiteStoreType, options: nil)
-             try persistentStoreCoordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: url, options: nil)
+        do {
+            try persistentStoreCoordinator.destroyPersistentStore(at:url, ofType: NSSQLiteStoreType, options: nil)
+            try persistentStoreCoordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: url, options: nil)
         } catch let error {
              debugPrint("Attempted to clear persistent store: " + error.localizedDescription)
         }
