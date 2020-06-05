@@ -65,9 +65,8 @@ public class CoreDataFeedStore: FeedStore {
         let coreDataFeedImages = feed.map { image -> CoreDataFeedImage in
             return CoreDataFeedImage(context: context, image: image)
         }
-        _ = Cache(context: context, feed: coreDataFeedImages, timestamp: timestamp)
-        
         do {
+            try deleteOldCacheAndInsertNew(feed: coreDataFeedImages, timestamp: timestamp)
             try context.save()
             completion(nil)
         } catch {
@@ -85,5 +84,13 @@ public class CoreDataFeedStore: FeedStore {
         } catch {
             completion(.failure(error))
         }
+    }
+    
+    private func deleteOldCacheAndInsertNew(feed: [CoreDataFeedImage], timestamp: Date) throws {
+        let request = Cache.createFetchRequest()
+        if let currentCache = try context.fetch(request).first {
+            context.delete(currentCache)
+        }
+        _ = Cache(context: context, feed: feed, timestamp: timestamp)
     }
 }
