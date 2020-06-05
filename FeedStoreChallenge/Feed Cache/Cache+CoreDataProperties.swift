@@ -59,7 +59,11 @@ extension Cache {
 
 extension Cache {
     convenience init(context moc: NSManagedObjectContext, feed: [CoreDataFeedImage], timestamp: Date) {
-        self.init(context: moc)
+        let name = String(describing: type(of: self))
+        guard let entity = NSEntityDescription.entity(forEntityName: name, in: moc) else {
+            fatalError("There is no entity with name \(name)")
+        }
+        self.init(entity: entity, insertInto: moc)
         self.timestamp = timestamp
         self.feed = NSOrderedSet(array: feed)
     }

@@ -27,7 +27,11 @@ extension CoreDataFeedImage {
 
 extension CoreDataFeedImage {
     convenience init(context moc: NSManagedObjectContext, image: LocalFeedImage) {
-        self.init(context: moc)
+        let name = String(describing: type(of: self))
+        guard let entity = NSEntityDescription.entity(forEntityName: name, in: moc) else {
+            fatalError("There is no entity with name \(name)")
+        }
+        self.init(entity: entity, insertInto: moc)
         self.id = image.id
         self.location = image.location
         self.feedDescription = image.description
