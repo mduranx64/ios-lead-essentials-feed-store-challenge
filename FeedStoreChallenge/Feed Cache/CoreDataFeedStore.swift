@@ -44,19 +44,6 @@ public class CoreDataFeedStore: FeedStore {
         return persistentContainer.viewContext
     }
     
-    internal func clearDatabase() {
-        guard let url = persistentContainer.persistentStoreDescriptions.first?.url else { return }
-
-        let persistentStoreCoordinator = persistentContainer.persistentStoreCoordinator
-
-        do {
-            try persistentStoreCoordinator.destroyPersistentStore(at:url, ofType: NSSQLiteStoreType, options: nil)
-            try persistentStoreCoordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: url, options: nil)
-        } catch let error {
-             debugPrint("Attempted to clear persistent store: " + error.localizedDescription)
-        }
-    }
-    
     public func deleteCachedFeed(completion: @escaping DeletionCompletion) {
         do {
             try deleteCache()

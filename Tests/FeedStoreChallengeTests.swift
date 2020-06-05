@@ -98,7 +98,7 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 	// - MARK: Helpers
 	
 	private func makeSUT(file: StaticString = #file, line: UInt = #line) -> FeedStore {
-        let sut = CoreDataFeedStore(storeURL: cachesDirectory())
+        let sut = CoreDataFeedStore(storeURL: testSpecificStoreURL())
         return sut
 	}
 	
@@ -111,8 +111,11 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
     }
     
     private func deleteStoreDataBase() {
-        let coreDataFeedStore = CoreDataFeedStore(storeURL: cachesDirectory())
-        coreDataFeedStore.clearDatabase()
+        try? FileManager.default.removeItem(at: testSpecificStoreURL())
+    }
+    
+    private func testSpecificStoreURL() -> URL {
+        return cachesDirectory().appendingPathComponent("database")
     }
     
     private func cachesDirectory() -> URL {
