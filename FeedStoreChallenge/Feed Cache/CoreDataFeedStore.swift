@@ -103,6 +103,7 @@ public class CoreDataFeedStore: FeedStore {
         do {
             try deleteCache()
             completion(nil)
+            try context.save()
         } catch {
             completion(error)
         }
