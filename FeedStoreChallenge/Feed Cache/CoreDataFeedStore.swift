@@ -84,8 +84,7 @@ public class CoreDataFeedStore: FeedStore {
         }
 
         let container = NSPersistentContainer(name: momdName, managedObjectModel: managedObjectModel)
-        let databaseUrl = self.storeURL.appendingPathComponent("\(momdName).sqlite")
-        let persistentStoreDescription = NSPersistentStoreDescription(url: databaseUrl)
+        let persistentStoreDescription = NSPersistentStoreDescription(url: self.storeURL)
         container.persistentStoreDescriptions = [persistentStoreDescription]
         
         container.loadPersistentStores { description, error in
