@@ -19,6 +19,7 @@
 		494A302024882CFE00943804 /* CoreDataFeedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 494A301F24882CFE00943804 /* CoreDataFeedStore.swift */; };
 		494A30342489591600943804 /* CoreDataFeedStore.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 494A302124885F3A00943804 /* CoreDataFeedStore.xcdatamodeld */; };
 		49BAB0982492BE4C00BAA868 /* XCTestCase+MemoryLeakTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BAB0972492BE4C00BAA868 /* XCTestCase+MemoryLeakTracking.swift */; };
+		49BAB09A2493030700BAA868 /* FeedStoreChallengeIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49BAB0992493030700BAA868 /* FeedStoreChallengeIntegrationTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +48,7 @@
 		494A301F24882CFE00943804 /* CoreDataFeedStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataFeedStore.swift; sourceTree = "<group>"; };
 		494A302224885F3A00943804 /* CoreDataFeedStore.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CoreDataFeedStore.xcdatamodel; sourceTree = "<group>"; };
 		49BAB0972492BE4C00BAA868 /* XCTestCase+MemoryLeakTracking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "XCTestCase+MemoryLeakTracking.swift"; sourceTree = "<group>"; };
+		49BAB0992493030700BAA868 /* FeedStoreChallengeIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedStoreChallengeIntegrationTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,6 +104,7 @@
 			children = (
 				08CE2BA92285BCE700183A1B /* FeedStoreSpecs */,
 				08CE2BB42285BEF100183A1B /* FeedStoreChallengeTests.swift */,
+				49BAB0992493030700BAA868 /* FeedStoreChallengeIntegrationTests.swift */,
 				08CE2B9B2285BBD100183A1B /* Info.plist */,
 			);
 			path = Tests;
@@ -256,6 +259,7 @@
 				08CE2BB12285BCE700183A1B /* XCTestCase+FailableRetrieveFeedStoreSpecs.swift in Sources */,
 				08CE2BAF2285BCE700183A1B /* XCTestCase+FeedStoreSpecs.swift in Sources */,
 				08CE2BB32285BCE700183A1B /* XCTestCase+FailableInsertFeedStoreSpecs.swift in Sources */,
+				49BAB09A2493030700BAA868 /* FeedStoreChallengeIntegrationTests.swift in Sources */,
 				08CE2BB52285BEF100183A1B /* FeedStoreChallengeTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
