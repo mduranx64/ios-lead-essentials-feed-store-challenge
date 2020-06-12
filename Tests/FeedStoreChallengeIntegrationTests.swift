@@ -29,21 +29,7 @@ class FeedStoreChallengeIntegrationTests: XCTestCase {
         
         insert(feed: savedFeed, with: firstStore)
         
-        let secondExpectation = expectation(description: "should insert feed")
-        secondStore.retrieve { result in
-            switch result {
-            case .empty:
-                XCTFail("should not be empty")
-            case .failure(let error):
-                XCTAssertNil(error, "error retrieving feed")
-            case .found(let loadedFeed, _):
-                XCTAssertEqual(loadedFeed, savedFeed, "feed should be ")
-
-            }
-            secondExpectation.fulfill()
-        }
-
-        wait(for: [secondExpectation], timeout: 1.0)
+        expec(with: secondStore, toLoad: savedFeed)
     }
     
     func test_readCache_whenCacheIsDeleted() {
@@ -55,23 +41,8 @@ class FeedStoreChallengeIntegrationTests: XCTestCase {
         insert(feed: savedFeed, with: firstStore)
         delete(with: secondStore)
         
-        let thirdExpectation = expectation(description: "should insert feed")
-        thirdStore.retrieve { result in
-            switch result {
-            case .empty:
-                break
-            case .failure(let error):
-                XCTAssertNil(error, "error retrieving feed")
-            case .found:
-                XCTFail("should not be found")
-
-            }
-            thirdExpectation.fulfill()
-        }
-
-        wait(for: [thirdExpectation], timeout: 1.0)
+        expec(with: thirdStore, toLoad: [])
     }
-    
     
     private func makeSUT(file: StaticString = #file, line: UInt = #line) -> FeedStore {
         let sut = CoreDataFeedStore(storeURL: testSpecificStoreURL())
@@ -91,9 +62,26 @@ class FeedStoreChallengeIntegrationTests: XCTestCase {
     private func delete(with store: FeedStore, file: StaticString = #file, line: UInt = #line) {
         let expec = expectation(description: "should delete feed")
         store.deleteCachedFeed { error in
-            XCTAssertNil(error, "error deleting feed")
+            XCTAssertNil(error, "error deleting feed", file: file, line: line)
             expec.fulfill()
         }
+        wait(for: [expec], timeout: 1.0)
+    }
+    
+    private func expec(with store: FeedStore, toLoad expectedFeed: [LocalFeedImage], file: StaticString = #file, line: UInt = #line) {
+        let expec = expectation(description: "should retrieve feed")
+        store.retrieve { result in
+            switch result {
+            case .empty:
+                XCTAssertEqual(expectedFeed, [], "feed sould be empty")
+            case .failure(let error):
+                XCTAssertNil(error, "error retrieving feed")
+            case .found(let loadedFeed, _):
+                XCTAssertEqual(loadedFeed, expectedFeed, "feed should be found")
+            }
+            expec.fulfill()
+        }
+
         wait(for: [expec], timeout: 1.0)
     }
     
