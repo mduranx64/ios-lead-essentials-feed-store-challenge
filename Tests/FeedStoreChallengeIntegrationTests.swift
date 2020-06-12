@@ -50,17 +50,10 @@ class FeedStoreChallengeIntegrationTests: XCTestCase {
         let firstStore = makeSUT()
         let secondStore = makeSUT()
         let thirdStore = makeSUT()
-
         let savedFeed = uniqueImageFeed()
 
         insert(feed: savedFeed, with: firstStore)
-        
-        let secondExpectation = expectation(description: "should insert feed")
-        secondStore.deleteCachedFeed { error in
-            XCTAssertNil(error, "error deletin feed")
-            secondExpectation.fulfill()
-        }
-        wait(for: [secondExpectation], timeout: 1.0)
+        delete(with: secondStore)
         
         let thirdExpectation = expectation(description: "should insert feed")
         thirdStore.retrieve { result in
@@ -90,6 +83,15 @@ class FeedStoreChallengeIntegrationTests: XCTestCase {
         let expec = expectation(description: "should save feed")
         store.insert(feed, timestamp: Date()) { error in
             XCTAssertNil(error, "error saving feed", file: file, line: line)
+            expec.fulfill()
+        }
+        wait(for: [expec], timeout: 1.0)
+    }
+    
+    private func delete(with store: FeedStore, file: StaticString = #file, line: UInt = #line) {
+        let expec = expectation(description: "should delete feed")
+        store.deleteCachedFeed { error in
+            XCTAssertNil(error, "error deleting feed")
             expec.fulfill()
         }
         wait(for: [expec], timeout: 1.0)
