@@ -52,6 +52,44 @@ class FeedStoreChallengeIntegrationTests: XCTestCase {
         wait(for: [secondExpectation], timeout: 1.0)
     }
     
+    func test_readCache_whenCacheIsDeleted() {
+        let feedStore = makeSUT()
+        let secondStore = makeSUT()
+        let thirdStore = makeSUT()
+
+        let savedFeed = uniqueImageFeed()
+
+        let firstExpectation = expectation(description: "should insert feed")
+        feedStore.insert(savedFeed, timestamp: Date()) { error in
+            XCTAssertNil(error, "error saving feed")
+            firstExpectation.fulfill()
+        }
+        wait(for: [firstExpectation], timeout: 1.0)
+        
+        let secondExpectation = expectation(description: "should insert feed")
+        secondStore.deleteCachedFeed { error in
+            XCTAssertNil(error, "error deletin feed")
+            secondExpectation.fulfill()
+        }
+        wait(for: [secondExpectation], timeout: 1.0)
+        
+        let thirdExpectation = expectation(description: "should insert feed")
+        thirdStore.retrieve { result in
+            switch result {
+            case .empty:
+                break
+            case .failure(let error):
+                XCTAssertNil(error, "error retrieving feed")
+            case .found:
+                XCTFail("should not be found")
+
+            }
+            thirdExpectation.fulfill()
+        }
+
+        wait(for: [thirdExpectation], timeout: 1.0)
+    }
+    
     
     private func makeSUT(file: StaticString = #file, line: UInt = #line) -> FeedStore {
         let sut = CoreDataFeedStore(storeURL: testSpecificStoreURL())
