@@ -16,6 +16,12 @@ public class CoreDataFeedStore: FeedStore {
         @nonobjc internal class func createFetchRequest() -> NSFetchRequest<Cache> {
             return NSFetchRequest<Cache>(entityName: "Cache")
         }
+        
+        internal static func delete(in context: NSManagedObjectContext) throws {
+            let request = createFetchRequest()
+            let caches = try context.fetch(request)
+            caches.forEach(context.delete)
+        }
 
         @NSManaged internal var timestamp: Date
         @NSManaged internal var feed: NSOrderedSet
