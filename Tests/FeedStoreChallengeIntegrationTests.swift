@@ -27,13 +27,7 @@ class FeedStoreChallengeIntegrationTests: XCTestCase {
         let secondStore = makeSUT()
         let savedFeed = uniqueImageFeed()
         
-        let firstExpectation = expectation(description: "should insert feed")
-        firstStore.insert(savedFeed, timestamp: Date()) { error in
-            XCTAssertNil(error, "error saving feed")
-            firstExpectation.fulfill()
-        }
-        wait(for: [firstExpectation], timeout: 1.0)
-
+        insert(feed: savedFeed, with: firstStore)
         
         let secondExpectation = expectation(description: "should insert feed")
         secondStore.retrieve { result in
@@ -53,18 +47,13 @@ class FeedStoreChallengeIntegrationTests: XCTestCase {
     }
     
     func test_readCache_whenCacheIsDeleted() {
-        let feedStore = makeSUT()
+        let firstStore = makeSUT()
         let secondStore = makeSUT()
         let thirdStore = makeSUT()
 
         let savedFeed = uniqueImageFeed()
 
-        let firstExpectation = expectation(description: "should insert feed")
-        feedStore.insert(savedFeed, timestamp: Date()) { error in
-            XCTAssertNil(error, "error saving feed")
-            firstExpectation.fulfill()
-        }
-        wait(for: [firstExpectation], timeout: 1.0)
+        insert(feed: savedFeed, with: firstStore)
         
         let secondExpectation = expectation(description: "should insert feed")
         secondStore.deleteCachedFeed { error in
@@ -95,6 +84,15 @@ class FeedStoreChallengeIntegrationTests: XCTestCase {
         let sut = CoreDataFeedStore(storeURL: testSpecificStoreURL())
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
+    }
+    
+    private func insert(feed: [LocalFeedImage], with store: FeedStore, file: StaticString = #file, line: UInt = #line) {
+        let expec = expectation(description: "should save feed")
+        store.insert(feed, timestamp: Date()) { error in
+            XCTAssertNil(error, "error saving feed", file: file, line: line)
+            expec.fulfill()
+        }
+        wait(for: [expec], timeout: 1.0)
     }
     
     func uniqueImageFeed() -> [LocalFeedImage] {
