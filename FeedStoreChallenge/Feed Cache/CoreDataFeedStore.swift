@@ -101,49 +101,52 @@ public class CoreDataFeedStore: FeedStore {
         return container
     }()
     
-    private var context: NSManagedObjectContext {
-        return persistentContainer.viewContext
-    }
+    private lazy var context: NSManagedObjectContext = {
+        return persistentContainer.newBackgroundContext()
+    }()
     
     public func deleteCachedFeed(completion: @escaping DeletionCompletion) {
-        do {
-            try deleteCache()
-            completion(nil)
-            try context.save()
-        } catch {
-            completion(error)
+        let ctx = context
+        context.perform {
+            do {
+                try Cache.delete(in: ctx)
+                try ctx.save()
+                completion(nil)
+            } catch {
+                completion(error)
+            }
         }
     }
     
     public func insert(_ feed: [LocalFeedImage], timestamp: Date, completion: @escaping InsertionCompletion) {
-        let coreDataFeedImages = feed.map { image -> CoreDataFeedImage in
-            return CoreDataFeedImage(context: context, image: image)
-        }
-        do {
-            try deleteCache()
-            _ = Cache(context: context, feed: coreDataFeedImages, timestamp: timestamp)
-            try context.save()
-            completion(nil)
-        } catch {
-            completion(error)
+        let ctx = self.context
+        context.perform {
+            let coreDataFeedImages = feed.map { image -> CoreDataFeedImage in
+                return CoreDataFeedImage(context: ctx, image: image)
+            }
+            do {
+                try Cache.delete(in: ctx)
+                _ = Cache(context: ctx, feed: coreDataFeedImages, timestamp: timestamp)
+                try ctx.save()
+                completion(nil)
+            } catch {
+                completion(error)
+            }
         }
     }
     
     public func retrieve(completion: @escaping RetrievalCompletion) {
-        let request = Cache.createFetchRequest()
-        do {
-            guard let cache = try context.fetch(request).first else {
-                return completion(.empty)
+        let ctx = self.context
+        context.perform {
+            let request = Cache.createFetchRequest()
+            do {
+                guard let cache = try ctx.fetch(request).first else {
+                    return completion(.empty)
+                }
+                completion(.found(feed: cache.localFeed, timestamp: cache.timestamp))
+            } catch {
+                completion(.failure(error))
             }
-            completion(.found(feed: cache.localFeed, timestamp: cache.timestamp))
-        } catch {
-            completion(.failure(error))
         }
-    } 
-    
-    private func deleteCache() throws {
-        let request = Cache.createFetchRequest()
-        let caches = try context.fetch(request)
-        caches.forEach(context.delete)
     }
 }
