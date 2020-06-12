@@ -7,8 +7,88 @@
 //
 
 import XCTest
+import FeedStoreChallenge
+
 
 class FeedStoreChallengeIntegrationTests: XCTestCase {
+    
+    override func setUp() {
+        super.setUp()
+        setupEmptyStoreState()
+    }
+    
+    override func tearDown() {
+        super.tearDown()
+        undoStoreSideEffects()
+    }
+    
+    func test_dataPersists_acrossAppLaunches() {
+        let firstStore = makeSUT()
+        let secondStore = makeSUT()
+        let savedFeed = uniqueImageFeed()
+        
+        let firstExpectation = expectation(description: "should insert feed")
+        firstStore.insert(savedFeed, timestamp: Date()) { error in
+            XCTAssertNil(error, "error saving feed")
+            firstExpectation.fulfill()
+        }
+        wait(for: [firstExpectation], timeout: 1.0)
 
+        
+        let secondExpectation = expectation(description: "should insert feed")
+        secondStore.retrieve { result in
+            switch result {
+            case .empty:
+                XCTFail("should not be empty")
+            case .failure(let error):
+                XCTAssertNil(error, "error retrieving feed")
+            case .found(let loadedFeed, _):
+                XCTAssertEqual(loadedFeed, savedFeed, "feed should be ")
 
+            }
+            secondExpectation.fulfill()
+        }
+
+        wait(for: [secondExpectation], timeout: 1.0)
+    }
+    
+    
+    private func makeSUT(file: StaticString = #file, line: UInt = #line) -> FeedStore {
+        let sut = CoreDataFeedStore(storeURL: testSpecificStoreURL())
+        trackForMemoryLeaks(sut, file: file, line: line)
+        return sut
+    }
+    
+    func uniqueImageFeed() -> [LocalFeedImage] {
+        return [uniqueImage(), uniqueImage()]
+    }
+    
+    func uniqueImage() -> LocalFeedImage {
+        return LocalFeedImage(id: UUID(), description: "any", location: "any", url: anyURL())
+    }
+    
+    func anyURL() -> URL {
+        return URL(string: "http://any-url.com")!
+    }
+    
+    private func setupEmptyStoreState() {
+        deleteStoreDataBase()
+    }
+    
+    private func undoStoreSideEffects() {
+        deleteStoreDataBase()
+    }
+    
+    private func deleteStoreDataBase() {
+        try? FileManager.default.removeItem(at: testSpecificStoreURL())
+    }
+    
+    private func testSpecificStoreURL() -> URL {
+        return cachesDirectory().appendingPathComponent("database.store")
+    }
+    
+    private func cachesDirectory() -> URL {
+        return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+    }
+    
 }
